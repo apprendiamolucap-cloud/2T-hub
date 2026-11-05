@@ -10,11 +10,8 @@ const MATERIE = [
   "Storia Sammarinese", "Diritto"
 ];
 
-// Stato iniziale interrogazioni
 let registroInterrogazioni = {};
-COMPAGNI.forEach(nome => {
-  registroInterrogazioni[nome] = [];
-});
+COMPAGNI.forEach(nome => registroInterrogazioni[nome] = []);
 
 let isRigActive = false;
 
@@ -27,14 +24,19 @@ document.addEventListener("DOMContentLoaded", () => {
     userSelectScreen.classList.remove("hidden");
   }, 2500);
 
-  inizializzaInterfaccia();
-});
-
-function inizializzaInterfaccia() {
   renderClassStatus();
   popolaSelettiRig();
+});
+
+/* MENU LATERALE TOGGLE */
+function toggleMenu() {
+  const sidebar = document.getElementById("sidebar");
+  const overlay = document.getElementById("sidebar-overlay");
+  sidebar.classList.toggle("hidden");
+  overlay.classList.toggle("hidden");
 }
 
+/* LOGIN & ADMIN LOGIC */
 function accendiHub() {
   const select = document.getElementById("user-select");
   const selectedOption = select.options[select.selectedIndex];
@@ -50,10 +52,10 @@ function accendiHub() {
     const pwd = prompt("Inserisci codice Admin:");
     if (pwd === "Santos") {
       alert("Accesso Admin Luca confermato!");
-      document.getElementById("admin-panel").classList.remove("hidden");
+      document.getElementById("sec-admin").classList.remove("hidden");
     } else if (pwd === "Gas" || pwd === "gas") {
       alert("Accesso Admin + TRUCCHI SEGRETI sbloccati!");
-      document.getElementById("admin-panel").classList.remove("hidden");
+      document.getElementById("sec-admin").classList.remove("hidden");
       document.getElementById("secret-rig-panel").classList.remove("hidden");
       isRigActive = true;
     } else {
@@ -66,26 +68,19 @@ function accendiHub() {
   document.getElementById("main-hub").classList.remove("hidden");
 }
 
-/* ESTRAZIONE SMART CON RIG OPZIONALE */
+/* ESTRAZIONE SMART */
 function estraiInterrogati() {
   const materia = document.getElementById("pick-materia").value;
-  const data = document.getElementById("pick-data").value;
   const count = parseInt(document.getElementById("pick-count").value) || 1;
 
   const excludedStudent = isRigActive ? document.getElementById("rig-exclude-select").value : "";
   const boostedStudent = isRigActive ? document.getElementById("rig-boost-select").value : "";
 
-  // Crea pool con pesi
   let pool = [];
   COMPAGNI.forEach(nome => {
-    if (nome === excludedStudent) return; // Esclude del tutto
-
-    let peso = 1;
-    if (nome === boostedStudent) peso = 10; // 10 volte più probabile
-
-    for (let i = 0; i < peso; i++) {
-      pool.push(nome);
-    }
+    if (nome === excludedStudent) return;
+    let peso = (nome === boostedStudent) ? 10 : 1;
+    for (let i = 0; i < peso; i++) pool.push(nome);
   });
 
   let estratti = new Set();
@@ -93,44 +88,81 @@ function estraiInterrogati() {
     const randomIndex = Math.floor(Math.random() * pool.length);
     const picchetto = pool[randomIndex];
     estratti.add(picchetto);
-    // Rimuove tutte le istanze dell'estratto per non pescarlo doppio
     pool = pool.filter(n => n !== picchetto);
   }
 
   const listaEstratti = Array.from(estratti);
 
-  // Registra l'interrogazione nel sistema
   listaEstratti.forEach(nome => {
     if (!registroInterrogazioni[nome].includes(materia)) {
       registroInterrogazioni[nome].push(materia);
     }
   });
 
-  // Mostra Risultato
   const resDiv = document.getElementById("draw-result");
-  const resNames = document.getElementById("draw-result-names");
-  resNames.textContent = listaEstratti.join(", ");
+  document.getElementById("draw-result-names").textContent = listaEstratti.join(", ");
   resDiv.classList.remove("hidden");
 
   renderClassStatus();
 }
 
-/* RENDER LISTA STATO CLASSE */
+/* FUNZIONI UTENTI & ADMIN */
+function pubblicaVerifica() {
+  const mat = document.getElementById("input-verifica-materia").value;
+  const data = document.getElementById("input-verifica-data").value;
+
+  if (!mat || !data) { alert("Compila materia e data!"); return; }
+
+  const container = document.getElementById("verifiche-list");
+  const item = document.createElement("div");
+  item.className = "verifica-item";
+  item.innerHTML = `<span class="materia">${mat}</span><span class="data">${data}</span>`;
+  container.appendChild(item);
+
+  document.getElementById("input-verifica-materia").value = "";
+  document.getElementById("input-verifica-data").value = "";
+}
+
+function pubblicaMateriale() {
+  const titolo = document.getElementById("input-materiale-titolo").value;
+  const link = document.getElementById("input-materiale-link").value || "#";
+
+  if (!titolo) { alert("Inserisci il nome del materiale!"); return; }
+
+  const container = document.getElementById("links-grid");
+  const btn = document.createElement("a");
+  btn.className = "chip-btn";
+  btn.href = link;
+  btn.target = "_blank";
+  btn.textContent = titolo;
+  container.appendChild(btn);
+
+  document.getElementById("input-materiale-titolo").value = "";
+  document.getElementById("input-materiale-link").value = "";
+}
+
+/* RESET ADMIN */
+function resetRegistri() {
+  COMPAGNI.forEach(nome => registroInterrogazioni[nome] = []);
+  renderClassStatus();
+  alert("Registri interrogazioni resettati!");
+}
+
+function svuotaVerifiche() {
+  document.getElementById("verifiche-list").innerHTML = "";
+  alert("Lista verifiche svuotata!");
+}
+
+/* AUX */
 function renderClassStatus() {
   const container = document.getElementById("class-status-list");
   container.innerHTML = "";
-
   COMPAGNI.forEach(nome => {
     const row = document.createElement("div");
     row.className = "student-row";
-
-    const nameDiv = document.createElement("div");
-    nameDiv.className = "student-name";
-    nameDiv.textContent = nome;
-
+    row.innerHTML = `<div class="student-name">${nome}</div>`;
     const tagsDiv = document.createElement("div");
     tagsDiv.className = "subjects-tags";
-
     MATERIE.forEach(mat => {
       const tag = document.createElement("span");
       const isDone = registroInterrogazioni[nome].includes(mat);
@@ -138,8 +170,6 @@ function renderClassStatus() {
       tag.textContent = isDone ? `✓ ${mat}` : mat;
       tagsDiv.appendChild(tag);
     });
-
-    row.appendChild(nameDiv);
     row.appendChild(tagsDiv);
     container.appendChild(row);
   });
@@ -148,37 +178,8 @@ function renderClassStatus() {
 function popolaSelettiRig() {
   const excSelect = document.getElementById("rig-exclude-select");
   const boostSelect = document.getElementById("rig-boost-select");
-
   COMPAGNI.forEach(nome => {
-    const opt1 = document.createElement("option");
-    opt1.value = nome;
-    opt1.textContent = nome;
-    excSelect.appendChild(opt1);
-
-    const opt2 = document.createElement("option");
-    opt2.value = nome;
-    opt2.textContent = nome;
-    boostSelect.appendChild(opt2);
+    excSelect.appendChild(new Option(nome, nome));
+    boostSelect.appendChild(new Option(nome, nome));
   });
-}
-
-/* FUNZIONE ADMIN PER NUOVE VERIFICHE */
-function aggiungiVerifica() {
-  const mat = document.getElementById("admin-verifica-materia").value;
-  const data = document.getElementById("admin-verifica-data").value;
-
-  if (!mat || !data) {
-    alert("Compila materia e data!");
-    return;
-  }
-
-  const container = document.getElementById("verifiche-list");
-  const item = document.createElement("div");
-  item.className = "verifica-item";
-  item.innerHTML = `<span class="materia">${mat}</span><span class="data">${data}</span>`;
-  container.appendChild(item);
-
-  document.getElementById("admin-verifica-materia").value = "";
-  document.getElementById("admin-verifica-data").value = "";
-  alert("Verifica aggiunta con successo!");
 }
