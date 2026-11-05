@@ -44,30 +44,45 @@
     </div>
   </div>
 
+  <!-- Menu Laterale (Sidebar) -->
+  <div id="sidebar-overlay" class="overlay hidden" onclick="toggleMenu()"></div>
+  <aside id="sidebar" class="sidebar hidden">
+    <div class="sidebar-header">
+      <h3>🚀 Navigation</h3>
+      <button class="close-btn" onclick="toggleMenu()">&times;</button>
+    </div>
+    <ul class="sidebar-links">
+      <li><a href="#sec-admin" onclick="toggleMenu()">⚡ Pannello Admin</a></li>
+      <li><a href="#sec-interrogazioni" onclick="toggleMenu()">📋 Zona Interrogazioni</a></li>
+      <li><a href="#sec-verifiche" onclick="toggleMenu()">🚨 Verifiche & Test</a></li>
+      <li><a href="#sec-appunti" onclick="toggleMenu()">📂 Appunti & Materiali</a></li>
+    </ul>
+  </aside>
+
   <!-- Main Hub -->
   <div id="main-hub" class="hidden">
     <header class="top-bar">
+      <button class="menu-btn" onclick="toggleMenu()">☰</button>
       <div class="logo">2T Hub</div>
       <div id="user-badge" class="user-badge">Ospite</div>
     </header>
 
     <main class="content-container">
 
-      <!-- PANNELLO ADMIN (Luca) -->
-      <section id="admin-panel" class="card admin-card hidden">
+      <!-- PANNELLO ADMIN (Luca Totale) -->
+      <section id="sec-admin" class="card admin-card hidden">
         <div class="admin-header">
           <h3>⚡ Pannello Controllo Admin</h3>
           <span class="badge-admin">MODE LUCA</span>
         </div>
         
         <div class="admin-controls">
-          <label>Aggiungi Nuova Verifica:</label>
-          <input type="text" id="admin-verifica-materia" placeholder="Materia (es. Fisica)">
-          <input type="text" id="admin-verifica-data" placeholder="Data (es. 15 Nov)">
-          <button class="btn-admin" onclick="aggiungiVerifica()">+ Pubblica Verifica</button>
+          <h4>🛠 Gestione Globale</h4>
+          <button class="btn-admin" onclick="resetRegistri()">🔄 Reset Registri Interrogazioni</button>
+          <button class="btn-admin secondary" onclick="svuotaVerifiche()">🗑️ Pulisci Lista Verifiche</button>
         </div>
 
-        <!-- SEZIONE TRUCCHI SEGRETI (Sbloccata con codice Gas) -->
+        <!-- TRUCCHI SEGRETI (Codice Gas/gas) -->
         <div id="secret-rig-panel" class="secret-box hidden">
           <h4>🤫 Rig Estrazione Segreto</h4>
           <label>Compagno da ESCLUDERE (0% chance):</label>
@@ -83,10 +98,10 @@
       </section>
 
       <!-- ZONA INTERROGAZIONI -->
-      <section class="card section-interrogazioni">
+      <section id="sec-interrogazioni" class="card section-interrogazioni">
         <h3>📋 Zona Interrogazioni</h3>
 
-        <!-- 1. ESTRAZIONE CASUALE -->
+        <!-- ESTRAZIONE CASUALE -->
         <div class="sub-section">
           <h4>🎲 Estrazione Interrogati</h4>
           <div class="picker-form">
@@ -121,20 +136,24 @@
           </div>
         </div>
 
-        <!-- 2. REGISTRO & LISTA MATERIE CLASSE -->
+        <!-- REGISTRO CLASSE -->
         <div class="sub-section">
           <h4>📊 Stato Interrogazioni Classe</h4>
-          <p class="section-desc">Controlla quali materie ha già svolto ogni compagno:</p>
-          <div id="class-status-list" class="class-status-list">
-            <!-- Generato dinamicamente via JS -->
-          </div>
+          <div id="class-status-list" class="class-status-list"></div>
         </div>
       </section>
 
-      <!-- BACHECA VERIFICHE -->
-      <section class="card">
+      <!-- BACHECA VERIFICHE (Aggiungono sia Admin che Utenti) -->
+      <section id="sec-verifiche" class="card">
         <h3>🚨 Programma Verifiche</h3>
-        <p class="section-desc">Date delle prossime verifiche in classe</p>
+        <p class="section-desc">Tutti gli studenti possono segnalare nuove verifiche!</p>
+
+        <div class="form-add-item">
+          <input type="text" id="input-verifica-materia" placeholder="Materia (es. Fisica)">
+          <input type="text" id="input-verifica-data" placeholder="Data (es. 18 Novembre)">
+          <button class="btn-primary" onclick="pubblicaVerifica()">+ Aggiungi Verifica</button>
+        </div>
+
         <div id="verifiche-list" class="verifiche-list">
           <div class="verifica-item">
             <span class="materia">Fisica</span>
@@ -143,12 +162,20 @@
         </div>
       </section>
 
-      <!-- ARCHIVIO APPUNTI -->
-      <section class="card">
-        <h3>📂 Archivio Appunti</h3>
-        <div class="links-grid">
-          <button class="chip-btn">Drive Chimica</button>
-          <button class="chip-btn">Schemi Inglese</button>
+      <!-- ARCHIVIO APPUNTI & MATERIALI (Aggiungono tutti) -->
+      <section id="sec-appunti" class="card">
+        <h3>📂 Appunti & Materiali di Classe</h3>
+        <p class="section-desc">Condividi schemi, link Drive o foto dei punti importanti.</p>
+
+        <div class="form-add-item">
+          <input type="text" id="input-materiale-titolo" placeholder="Nome appunti (es. Schemi Inglese)">
+          <input type="url" id="input-materiale-link" placeholder="Link Drive / File (opzionale)">
+          <button class="btn-primary" onclick="pubblicaMateriale()">+ Aggiungi Appunto</button>
+        </div>
+
+        <div id="links-grid" class="links-grid">
+          <a class="chip-btn" href="#" target="_blank">Drive Chimica</a>
+          <a class="chip-btn" href="#" target="_blank">Schemi Inglese</a>
         </div>
       </section>
 
