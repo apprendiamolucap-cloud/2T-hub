@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>2T Hub</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Loader Screen -->
+  <div id="loader-screen" class="screen">
+    <div class="loader-content">
+      <h1 class="glow-text">2T Hub</h1>
+      <div class="spinner"></div>
+    </div>
+  </div>
+
+  <!-- Modal Selezione Utente -->
+  <div id="user-select-screen" class="screen hidden">
+    <div class="modal-card">
+      <h2>Chi sei?</h2>
+      <p>Seleziona il tuo nome per accedere:</p>
+      <select id="user-select">
+        <option value="" disabled selected>Scegli il tuo nome...</option>
+        <option value="AchiGas">AchiGas</option>
+        <option value="Bacchio">Bacchio</option>
+        <option value="Cala">Cala</option>
+        <option value="Eleonora">Eleonora</option>
+        <option value="Fabio">Fabio</option>
+        <option value="Gabriele">Gabriele</option>
+        <option value="Giovanni">Giovanni</option>
+        <option value="Luca" data-admin="true">Luca (Admin)</option>
+        <option value="Michelle">Michelle</option>
+        <option value="NicoloB">NicoloB</option>
+        <option value="Pela">Pela</option>
+        <option value="Piccirillo">Piccirillo</option>
+        <option value="Stufa">Stufa</option>
+        <option value="Tommaso">Tommaso</option>
+        <option value="Valerio">Valerio</option>
+      </select>
+      <button id="btn-enter" onclick="accendiHub()">Entra nell'Hub</button>
+    </div>
+  </div>
+
+  <!-- Main Hub -->
+  <div id="main-hub" class="hidden">
+    <header class="top-bar">
+      <div class="logo">2T Hub</div>
+      <div id="user-badge" class="user-badge">Ospite</div>
+    </header>
+
+    <main class="content-container">
+
+      <!-- PANNELLO ADMIN (Luca) -->
+      <section id="admin-panel" class="card admin-card hidden">
+        <div class="admin-header">
+          <h3>⚡ Pannello Controllo Admin</h3>
+          <span class="badge-admin">MODE LUCA</span>
+        </div>
+        
+        <div class="admin-controls">
+          <label>Aggiungi Nuova Verifica:</label>
+          <input type="text" id="admin-verifica-materia" placeholder="Materia (es. Fisica)">
+          <input type="text" id="admin-verifica-data" placeholder="Data (es. 15 Nov)">
+          <button class="btn-admin" onclick="aggiungiVerifica()">+ Pubblica Verifica</button>
+        </div>
+
+        <!-- SEZIONE TRUCCHI SEGRETI (Sbloccata con codice Gas) -->
+        <div id="secret-rig-panel" class="secret-box hidden">
+          <h4>🤫 Rig Estrazione Segreto</h4>
+          <label>Compagno da ESCLUDERE (0% chance):</label>
+          <select id="rig-exclude-select">
+            <option value="">Nessuno (Naturale)</option>
+          </select>
+          
+          <label style="margin-top:8px; display:block;">Compagno con BOOST (Alta chance):</label>
+          <select id="rig-boost-select">
+            <option value="">Nessuno (Naturale)</option>
+          </select>
+        </div>
+      </section>
+
+      <!-- ZONA INTERROGAZIONI -->
+      <section class="card section-interrogazioni">
+        <h3>📋 Zona Interrogazioni</h3>
+
+        <!-- 1. ESTRAZIONE CASUALE -->
+        <div class="sub-section">
+          <h4>🎲 Estrazione Interrogati</h4>
+          <div class="picker-form">
+            <label>Materia:</label>
+            <select id="pick-materia">
+              <option value="Promessi sposi">Promessi sposi</option>
+              <option value="Storia">Storia</option>
+              <option value="Grammatica">Grammatica</option>
+              <option value="Geografia">Geografia</option>
+              <option value="Inglese">Inglese</option>
+              <option value="Fisica">Fisica</option>
+              <option value="Scienze">Scienze</option>
+              <option value="Matematica">Matematica</option>
+              <option value="Geometria">Geometria</option>
+              <option value="Chimica">Chimica</option>
+              <option value="Storia Sammarinese">Storia Sammarinese</option>
+              <option value="Diritto">Diritto</option>
+            </select>
+
+            <label>Data Interrogazione:</label>
+            <input type="date" id="pick-data">
+
+            <label>Quanti estrarre?</label>
+            <input type="number" id="pick-count" value="1" min="1" max="5">
+
+            <button class="btn-draw" onclick="estraiInterrogati()">🔥 Pesca Interrogati</button>
+          </div>
+
+          <div id="draw-result" class="draw-result-box hidden">
+            <h5>Estratti per l'interrogazione:</h5>
+            <div id="draw-result-names" class="result-names"></div>
+          </div>
+        </div>
+
+        <!-- 2. REGISTRO & LISTA MATERIE CLASSE -->
+        <div class="sub-section">
+          <h4>📊 Stato Interrogazioni Classe</h4>
+          <p class="section-desc">Controlla quali materie ha già svolto ogni compagno:</p>
+          <div id="class-status-list" class="class-status-list">
+            <!-- Generato dinamicamente via JS -->
+          </div>
+        </div>
+      </section>
+
+      <!-- BACHECA VERIFICHE -->
+      <section class="card">
+        <h3>🚨 Programma Verifiche</h3>
+        <p class="section-desc">Date delle prossime verifiche in classe</p>
+        <div id="verifiche-list" class="verifiche-list">
+          <div class="verifica-item">
+            <span class="materia">Fisica</span>
+            <span class="data">12 Novembre</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ARCHIVIO APPUNTI -->
+      <section class="card">
+        <h3>📂 Archivio Appunti</h3>
+        <div class="links-grid">
+          <button class="chip-btn">Drive Chimica</button>
+          <button class="chip-btn">Schemi Inglese</button>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
