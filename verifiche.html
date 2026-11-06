@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2T Hub - Verifiche</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <header class="top-bar">
+    <a href="index.html" class="logo-group">
+      <img src="logo.svg" alt="Logo" class="nav-logo">
+      <span class="logo-text">2T Hub</span>
+    </a>
+    <div id="user-badge" class="user-badge">Ospite</div>
+  </header>
+
+  <nav class="nav-tabs">
+    <a href="interrogazioni.html" class="tab-link">📋 Interrogazioni</a>
+    <a href="verifiche.html" class="tab-link active">🚨 Verifiche</a>
+    <a href="appunti.html" class="tab-link">📂 Appunti</a>
+    <a href="admin.html" id="nav-admin-link" class="tab-link hidden">⚡ Admin</a>
+  </nav>
+
+  <main class="content-container">
+
+    <section class="card">
+      <h3>🚨 Segnala una nuova Verifica</h3>
+      <p class="section-desc">Aggiungi i prossimi test o compiti scritti programmati.</p>
+
+      <div class="form-add-item">
+        <input type="text" id="input-verifica-materia" placeholder="Materia (es. Fisica)">
+        <input type="text" id="input-verifica-data" placeholder="Data (es. 20 Novembre)">
+        <button class="btn-primary" onclick="pubblicaVerifica()">+ Aggiungi alla lista</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h3>📅 Prossime Verifiche in Classe</h3>
+      <div id="verifiche-list" class="verifiche-list">
+        <div class="verifica-item">
+          <span class="materia">Fisica</span>
+          <span class="data">15 Novembre</span>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
