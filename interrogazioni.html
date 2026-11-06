@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2T Hub - Interrogazioni</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <!-- Menu Navigazione -->
+  <header class="top-bar">
+    <a href="index.html" class="logo-group">
+      <img src="logo.svg" alt="Logo" class="nav-logo">
+      <span class="logo-text">2T Hub</span>
+    </a>
+    <div id="user-badge" class="user-badge">Ospite</div>
+  </header>
+
+  <nav class="nav-tabs">
+    <a href="interrogazioni.html" class="tab-link active">📋 Interrogazioni</a>
+    <a href="verifiche.html" class="tab-link">🚨 Verifiche</a>
+    <a href="appunti.html" class="tab-link">📂 Appunti</a>
+    <a href="admin.html" id="nav-admin-link" class="tab-link hidden">⚡ Admin</a>
+  </nav>
+
+  <main class="content-container">
+
+    <section class="card">
+      <h3>🎲 Estrazione Interrogati</h3>
+      <p class="section-desc">Seleziona la materia e scopri chi verrà pescato!</p>
+
+      <div class="picker-form">
+        <label>Materia:</label>
+        <select id="pick-materia">
+          <option value="Promessi sposi">Promessi sposi</option>
+          <option value="Storia">Storia</option>
+          <option value="Grammatica">Grammatica</option>
+          <option value="Geografia">Geografia</option>
+          <option value="Inglese">Inglese</option>
+          <option value="Fisica">Fisica</option>
+          <option value="Scienze">Scienze</option>
+          <option value="Matematica">Matematica</option>
+          <option value="Geometria">Geometria</option>
+          <option value="Chimica">Chimica</option>
+          <option value="Storia Sammarinese">Storia Sammarinese</option>
+          <option value="Diritto">Diritto</option>
+        </select>
+
+        <label>Quanti estrarre?</label>
+        <input type="number" id="pick-count" value="1" min="1" max="5">
+
+        <button class="btn-draw" onclick="estraiInterrogati()">🔥 Pesca Interrogati</button>
+      </div>
+
+      <div id="draw-result" class="draw-result-box hidden">
+        <h5>Estratti per l'interrogazione:</h5>
+        <div id="draw-result-names" class="result-names"></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h3>📊 Stato Interrogazioni Classe</h3>
+      <p class="section-desc">Mappa delle materie già svolte da ciascun compagno</p>
+      <div id="class-status-list" class="class-status-list"></div>
+    </section>
+
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
