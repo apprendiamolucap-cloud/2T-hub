@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2T Hub - Controllo Admin</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <header class="top-bar">
+    <a href="index.html" class="logo-group">
+      <img src="logo.svg" alt="Logo" class="nav-logo">
+      <span class="logo-text">2T Hub</span>
+    </a>
+    <div id="user-badge" class="user-badge">Ospite</div>
+  </header>
+
+  <nav class="nav-tabs">
+    <a href="interrogazioni.html" class="tab-link">📋 Interrogazioni</a>
+    <a href="verifiche.html" class="tab-link">🚨 Verifiche</a>
+    <a href="appunti.html" class="tab-link">📂 Appunti</a>
+    <a href="admin.html" class="tab-link active">⚡ Admin</a>
+  </nav>
+
+  <main class="content-container">
+
+    <section class="card admin-card">
+      <div class="admin-header">
+        <h3>⚡ Pannello Admin Globale</h3>
+        <span class="badge-admin">MODE LUCA</span>
+      </div>
+      
+      <div class="admin-controls">
+        <button class="btn-admin" onclick="resetRegistri()">🔄 Reset Interrogazioni Classe</button>
+        <button class="btn-admin secondary" onclick="svuotaVerifiche()">🗑️ Resetta Lista Verifiche</button>
+      </div>
+
+      <!-- RIG SEGRETO (Solo con codice Gas/gas) -->
+      <div id="secret-rig-panel" class="secret-box hidden">
+        <h4>🤫 Rig Estrazione Segreto</h4>
+        <p class="secret-desc">Seleziona chi escludere completamente o favorire nell'estrazione casuale.</p>
+        
+        <label>Compagno da ESCLUDERE (0% probabilità):</label>
+        <select id="rig-exclude-select">
+          <option value="">Nessuno (Naturale)</option>
+        </select>
+        
+        <label style="margin-top:10px; display:block;">Compagno con BOOST (Alta probabilità):</label>
+        <select id="rig-boost-select">
+          <option value="">Nessuno (Naturale)</option>
+        </select>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
