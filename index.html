@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>2T Hub</title>
+  <title>2T Hub - Benvenuto</title>
   <link rel="stylesheet" href="style.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
@@ -12,7 +12,8 @@
   <!-- Loader Screen -->
   <div id="loader-screen" class="screen">
     <div class="loader-content">
-      <h1 class="glow-text">2T Hub</h1>
+      <img src="logo.svg" alt="2T Hub Logo" class="main-logo-anim">
+      <h1 class="glow-text">2T HUB</h1>
       <div class="spinner"></div>
     </div>
   </div>
@@ -20,8 +21,9 @@
   <!-- Modal Selezione Utente -->
   <div id="user-select-screen" class="screen hidden">
     <div class="modal-card">
-      <h2>Chi sei?</h2>
-      <p>Seleziona il tuo nome per accedere:</p>
+      <img src="logo.svg" alt="Logo" class="modal-logo">
+      <h2>Accedi alla 2T</h2>
+      <p>Seleziona il tuo nome per iniziare:</p>
       <select id="user-select">
         <option value="" disabled selected>Scegli il tuo nome...</option>
         <option value="AchiGas">AchiGas</option>
@@ -42,144 +44,6 @@
       </select>
       <button id="btn-enter" onclick="accendiHub()">Entra nell'Hub</button>
     </div>
-  </div>
-
-  <!-- Menu Laterale (Sidebar) -->
-  <div id="sidebar-overlay" class="overlay hidden" onclick="toggleMenu()"></div>
-  <aside id="sidebar" class="sidebar hidden">
-    <div class="sidebar-header">
-      <h3>🚀 Navigation</h3>
-      <button class="close-btn" onclick="toggleMenu()">&times;</button>
-    </div>
-    <ul class="sidebar-links">
-      <li><a href="#sec-admin" onclick="toggleMenu()">⚡ Pannello Admin</a></li>
-      <li><a href="#sec-interrogazioni" onclick="toggleMenu()">📋 Zona Interrogazioni</a></li>
-      <li><a href="#sec-verifiche" onclick="toggleMenu()">🚨 Verifiche & Test</a></li>
-      <li><a href="#sec-appunti" onclick="toggleMenu()">📂 Appunti & Materiali</a></li>
-    </ul>
-  </aside>
-
-  <!-- Main Hub -->
-  <div id="main-hub" class="hidden">
-    <header class="top-bar">
-      <button class="menu-btn" onclick="toggleMenu()">☰</button>
-      <div class="logo">2T Hub</div>
-      <div id="user-badge" class="user-badge">Ospite</div>
-    </header>
-
-    <main class="content-container">
-
-      <!-- PANNELLO ADMIN (Luca Totale) -->
-      <section id="sec-admin" class="card admin-card hidden">
-        <div class="admin-header">
-          <h3>⚡ Pannello Controllo Admin</h3>
-          <span class="badge-admin">MODE LUCA</span>
-        </div>
-        
-        <div class="admin-controls">
-          <h4>🛠 Gestione Globale</h4>
-          <button class="btn-admin" onclick="resetRegistri()">🔄 Reset Registri Interrogazioni</button>
-          <button class="btn-admin secondary" onclick="svuotaVerifiche()">🗑️ Pulisci Lista Verifiche</button>
-        </div>
-
-        <!-- TRUCCHI SEGRETI (Codice Gas/gas) -->
-        <div id="secret-rig-panel" class="secret-box hidden">
-          <h4>🤫 Rig Estrazione Segreto</h4>
-          <label>Compagno da ESCLUDERE (0% chance):</label>
-          <select id="rig-exclude-select">
-            <option value="">Nessuno (Naturale)</option>
-          </select>
-          
-          <label style="margin-top:8px; display:block;">Compagno con BOOST (Alta chance):</label>
-          <select id="rig-boost-select">
-            <option value="">Nessuno (Naturale)</option>
-          </select>
-        </div>
-      </section>
-
-      <!-- ZONA INTERROGAZIONI -->
-      <section id="sec-interrogazioni" class="card section-interrogazioni">
-        <h3>📋 Zona Interrogazioni</h3>
-
-        <!-- ESTRAZIONE CASUALE -->
-        <div class="sub-section">
-          <h4>🎲 Estrazione Interrogati</h4>
-          <div class="picker-form">
-            <label>Materia:</label>
-            <select id="pick-materia">
-              <option value="Promessi sposi">Promessi sposi</option>
-              <option value="Storia">Storia</option>
-              <option value="Grammatica">Grammatica</option>
-              <option value="Geografia">Geografia</option>
-              <option value="Inglese">Inglese</option>
-              <option value="Fisica">Fisica</option>
-              <option value="Scienze">Scienze</option>
-              <option value="Matematica">Matematica</option>
-              <option value="Geometria">Geometria</option>
-              <option value="Chimica">Chimica</option>
-              <option value="Storia Sammarinese">Storia Sammarinese</option>
-              <option value="Diritto">Diritto</option>
-            </select>
-
-            <label>Data Interrogazione:</label>
-            <input type="date" id="pick-data">
-
-            <label>Quanti estrarre?</label>
-            <input type="number" id="pick-count" value="1" min="1" max="5">
-
-            <button class="btn-draw" onclick="estraiInterrogati()">🔥 Pesca Interrogati</button>
-          </div>
-
-          <div id="draw-result" class="draw-result-box hidden">
-            <h5>Estratti per l'interrogazione:</h5>
-            <div id="draw-result-names" class="result-names"></div>
-          </div>
-        </div>
-
-        <!-- REGISTRO CLASSE -->
-        <div class="sub-section">
-          <h4>📊 Stato Interrogazioni Classe</h4>
-          <div id="class-status-list" class="class-status-list"></div>
-        </div>
-      </section>
-
-      <!-- BACHECA VERIFICHE (Aggiungono sia Admin che Utenti) -->
-      <section id="sec-verifiche" class="card">
-        <h3>🚨 Programma Verifiche</h3>
-        <p class="section-desc">Tutti gli studenti possono segnalare nuove verifiche!</p>
-
-        <div class="form-add-item">
-          <input type="text" id="input-verifica-materia" placeholder="Materia (es. Fisica)">
-          <input type="text" id="input-verifica-data" placeholder="Data (es. 18 Novembre)">
-          <button class="btn-primary" onclick="pubblicaVerifica()">+ Aggiungi Verifica</button>
-        </div>
-
-        <div id="verifiche-list" class="verifiche-list">
-          <div class="verifica-item">
-            <span class="materia">Fisica</span>
-            <span class="data">12 Novembre</span>
-          </div>
-        </div>
-      </section>
-
-      <!-- ARCHIVIO APPUNTI & MATERIALI (Aggiungono tutti) -->
-      <section id="sec-appunti" class="card">
-        <h3>📂 Appunti & Materiali di Classe</h3>
-        <p class="section-desc">Condividi schemi, link Drive o foto dei punti importanti.</p>
-
-        <div class="form-add-item">
-          <input type="text" id="input-materiale-titolo" placeholder="Nome appunti (es. Schemi Inglese)">
-          <input type="url" id="input-materiale-link" placeholder="Link Drive / File (opzionale)">
-          <button class="btn-primary" onclick="pubblicaMateriale()">+ Aggiungi Appunto</button>
-        </div>
-
-        <div id="links-grid" class="links-grid">
-          <a class="chip-btn" href="#" target="_blank">Drive Chimica</a>
-          <a class="chip-btn" href="#" target="_blank">Schemi Inglese</a>
-        </div>
-      </section>
-
-    </main>
   </div>
 
   <script src="script.js"></script>
