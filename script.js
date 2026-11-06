@@ -10,33 +10,28 @@ const MATERIE = [
   "Storia Sammarinese", "Diritto"
 ];
 
-let registroInterrogazioni = {};
-COMPAGNI.forEach(nome => registroInterrogazioni[nome] = []);
-
-let isRigActive = false;
+let registroInterrogazioni = JSON.parse(localStorage.getItem("registroInterrogazioni")) || {};
+COMPAGNI.forEach(nome => {
+  if (!registroInterrogazioni[nome]) registroInterrogazioni[nome] = [];
+});
 
 document.addEventListener("DOMContentLoaded", () => {
+  // Gestione schermata loader iniziale se in index.html
   const loaderScreen = document.getElementById("loader-screen");
   const userSelectScreen = document.getElementById("user-select-screen");
 
-  setTimeout(() => {
-    loaderScreen.classList.add("hidden");
-    userSelectScreen.classList.remove("hidden");
-  }, 2500);
+  if (loaderScreen && userSelectScreen) {
+    setTimeout(() => {
+      loaderScreen.classList.add("hidden");
+      userSelectScreen.classList.remove("hidden");
+    }, 2000);
+  }
 
-  renderClassStatus();
-  popolaSelettiRig();
+  aggiornaStatoUtente();
+  if (document.getElementById("class-status-list")) renderClassStatus();
+  if (document.getElementById("rig-exclude-select")) popolaSelettiRig();
 });
 
-/* MENU LATERALE TOGGLE */
-function toggleMenu() {
-  const sidebar = document.getElementById("sidebar");
-  const overlay = document.getElementById("sidebar-overlay");
-  sidebar.classList.toggle("hidden");
-  overlay.classList.toggle("hidden");
-}
-
-/* LOGIN & ADMIN LOGIC */
 function accendiHub() {
   const select = document.getElementById("user-select");
   const selectedOption = select.options[select.selectedIndex];
@@ -48,37 +43,64 @@ function accendiHub() {
     return;
   }
 
+  localStorage.setItem("currentUser", selectedUser);
+
   if (isAdmin) {
     const pwd = prompt("Inserisci codice Admin:");
     if (pwd === "Santos") {
       alert("Accesso Admin Luca confermato!");
-      document.getElementById("sec-admin").classList.remove("hidden");
+      localStorage.setItem("role", "admin");
+      localStorage.setItem("isRigActive", "false");
     } else if (pwd === "Gas" || pwd === "gas") {
-      alert("Accesso Admin + TRUCCHI SEGRETI sbloccati!");
-      document.getElementById("sec-admin").classList.remove("hidden");
-      document.getElementById("secret-rig-panel").classList.remove("hidden");
-      isRigActive = true;
+      alert("Accesso Admin + RIG SEGRETO sbloccato!");
+      localStorage.setItem("role", "admin");
+      localStorage.setItem("isRigActive", "true");
     } else {
       alert("Codice errato. Entri come utente standard.");
+      localStorage.setItem("role", "user");
     }
+  } else {
+    localStorage.setItem("role", "user");
   }
 
-  document.getElementById("user-badge").textContent = selectedUser;
-  document.getElementById("user-select-screen").classList.add("hidden");
-  document.getElementById("main-hub").classList.remove("hidden");
+  window.location.href = "interrogazioni.html";
 }
 
-/* ESTRAZIONE SMART */
+function aggiornaStatoUtente() {
+  const user = localStorage.getItem("currentUser") || "Ospite";
+  const role = localStorage.getItem("role");
+  const isRig = localStorage.getItem("isRigActive") === "true";
+
+  const badge = document.getElementById("user-badge");
+  if (badge) badge.textContent = user;
+
+  const adminLink = document.getElementById("nav-admin-link");
+  if (adminLink && role === "admin") {
+    adminLink.classList.remove("hidden");
+  }
+
+  const rigPanel = document.getElementById("secret-rig-panel");
+  if (rigPanel && isRig) {
+    rigPanel.classList.remove("hidden");
+  }
+}
+
+/* ESTRAZIONE CASUALE SMART CON RIG SEGRETO */
 function estraiInterrogati() {
   const materia = document.getElementById("pick-materia").value;
   const count = parseInt(document.getElementById("pick-count").value) || 1;
 
-  const excludedStudent = isRigActive ? document.getElementById("rig-exclude-select").value : "";
-  const boostedStudent = isRigActive ? document.getElementById("rig-boost-select").value : "";
+  const isRigActive = localStorage.getItem("isRigActive") === "true";
+  const excludedStudent = isRigActive && document.getElementById("rig-exclude-select") 
+    ? document.getElementById("rig-exclude-select").value 
+    : "";
+  const boostedStudent = isRigActive && document.getElementById("rig-boost-select") 
+    ? document.getElementById("rig-boost-select").value 
+    : "";
 
   let pool = [];
   COMPAGNI.forEach(nome => {
-    if (nome === excludedStudent) return;
+    if (nome === excludedStudent) return; // Esclusione 0%
     let peso = (nome === boostedStudent) ? 10 : 1;
     for (let i = 0; i < peso; i++) pool.push(nome);
   });
@@ -99,6 +121,8 @@ function estraiInterrogati() {
     }
   });
 
+  localStorage.setItem("registroInterrogazioni", JSON.stringify(registroInterrogazioni));
+
   const resDiv = document.getElementById("draw-result");
   document.getElementById("draw-result-names").textContent = listaEstratti.join(", ");
   resDiv.classList.remove("hidden");
@@ -106,7 +130,6 @@ function estraiInterrogati() {
   renderClassStatus();
 }
 
-/* FUNZIONI UTENTI & ADMIN */
 function pubblicaVerifica() {
   const mat = document.getElementById("input-verifica-materia").value;
   const data = document.getElementById("input-verifica-data").value;
@@ -127,7 +150,7 @@ function pubblicaMateriale() {
   const titolo = document.getElementById("input-materiale-titolo").value;
   const link = document.getElementById("input-materiale-link").value || "#";
 
-  if (!titolo) { alert("Inserisci il nome del materiale!"); return; }
+  if (!titolo) { alert("Inserisci il titolo del materiale!"); return; }
 
   const container = document.getElementById("links-grid");
   const btn = document.createElement("a");
@@ -141,35 +164,40 @@ function pubblicaMateriale() {
   document.getElementById("input-materiale-link").value = "";
 }
 
-/* RESET ADMIN */
 function resetRegistri() {
   COMPAGNI.forEach(nome => registroInterrogazioni[nome] = []);
-  renderClassStatus();
+  localStorage.setItem("registroInterrogazioni", JSON.stringify(registroInterrogazioni));
+  if (document.getElementById("class-status-list")) renderClassStatus();
   alert("Registri interrogazioni resettati!");
 }
 
 function svuotaVerifiche() {
-  document.getElementById("verifiche-list").innerHTML = "";
+  const vList = document.getElementById("verifiche-list");
+  if (vList) vList.innerHTML = "";
   alert("Lista verifiche svuotata!");
 }
 
-/* AUX */
 function renderClassStatus() {
   const container = document.getElementById("class-status-list");
+  if (!container) return;
   container.innerHTML = "";
+
   COMPAGNI.forEach(nome => {
     const row = document.createElement("div");
     row.className = "student-row";
     row.innerHTML = `<div class="student-name">${nome}</div>`;
+
     const tagsDiv = document.createElement("div");
     tagsDiv.className = "subjects-tags";
+
     MATERIE.forEach(mat => {
       const tag = document.createElement("span");
-      const isDone = registroInterrogazioni[nome].includes(mat);
+      const isDone = registroInterrogazioni[nome] && registroInterrogazioni[nome].includes(mat);
       tag.className = `tag ${isDone ? 'done' : ''}`;
       tag.textContent = isDone ? `✓ ${mat}` : mat;
       tagsDiv.appendChild(tag);
     });
+
     row.appendChild(tagsDiv);
     container.appendChild(row);
   });
@@ -178,6 +206,8 @@ function renderClassStatus() {
 function popolaSelettiRig() {
   const excSelect = document.getElementById("rig-exclude-select");
   const boostSelect = document.getElementById("rig-boost-select");
+  if (!excSelect || !boostSelect) return;
+
   COMPAGNI.forEach(nome => {
     excSelect.appendChild(new Option(nome, nome));
     boostSelect.appendChild(new Option(nome, nome));
