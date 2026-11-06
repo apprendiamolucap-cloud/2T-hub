@@ -5,11 +5,12 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>2T Hub - Interrogazioni</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="apple-touch-icon" href="logo.svg">
+  <link rel="icon" type="image/svg+xml" href="logo.svg">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 
-  <!-- Menu Navigazione -->
   <header class="top-bar">
     <a href="index.html" class="logo-group">
       <img src="logo.svg" alt="Logo" class="nav-logo">
@@ -29,7 +30,7 @@
 
     <section class="card">
       <h3>🎲 Estrazione Interrogati</h3>
-      <p class="section-desc">Seleziona la materia e scopri chi verrà pescato!</p>
+      <p class="section-desc">Tutti i compagni hanno esattamente la stessa probabilità (100% equo casuale).</p>
 
       <div class="picker-form">
         <label>Materia:</label>
@@ -48,10 +49,14 @@
           <option value="Diritto">Diritto</option>
         </select>
 
-        <label>Quanti estrarre?</label>
-        <input type="number" id="pick-count" value="1" min="1" max="5">
+        <label>Modalità di Estrazione:</label>
+        <select id="pick-modalita">
+          <option value="singolo">Singolo (1 Persona)</option>
+          <option value="coppia">Coppia (2 Persone)</option>
+          <option value="tris">Tris (3 Persone)</option>
+        </select>
 
-        <button class="btn-draw" onclick="estraiInterrogati()">🔥 Pesca Interrogati</button>
+        <button class="btn-draw" onclick="estraiInterrogati()">🔥 Pesca Equo & Casuale</button>
       </div>
 
       <div id="draw-result" class="draw-result-box hidden">
