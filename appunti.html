@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>2T Hub - Appunti</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <header class="top-bar">
+    <a href="index.html" class="logo-group">
+      <img src="logo.svg" alt="Logo" class="nav-logo">
+      <span class="logo-text">2T Hub</span>
+    </a>
+    <div id="user-badge" class="user-badge">Ospite</div>
+  </header>
+
+  <nav class="nav-tabs">
+    <a href="interrogazioni.html" class="tab-link">📋 Interrogazioni</a>
+    <a href="verifiche.html" class="tab-link">🚨 Verifiche</a>
+    <a href="appunti.html" class="tab-link active">📂 Appunti</a>
+    <a href="admin.html" id="nav-admin-link" class="tab-link hidden">⚡ Admin</a>
+  </nav>
+
+  <main class="content-container">
+
+    <section class="card">
+      <h3>📤 Condividi Materiale</h3>
+      <p class="section-desc">Inserisci il nome e il link Drive delle foto lavagna o appunti.</p>
+
+      <div class="form-add-item">
+        <input type="text" id="input-materiale-titolo" placeholder="Titolo appunti (es. Schemi Inglese)">
+        <input type="url" id="input-materiale-link" placeholder="Link file o Drive">
+        <button class="btn-primary" onclick="pubblicaMateriale()">+ Pubblica Materiale</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h3>📂 Archivio Materiale 2T</h3>
+      <div id="links-grid" class="links-grid">
+        <a class="chip-btn" href="#" target="_blank">Drive Chimica</a>
+        <a class="chip-btn" href="#" target="_blank">Schemi Inglese</a>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
