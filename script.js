@@ -16,7 +16,6 @@ COMPAGNI.forEach(nome => {
 });
 
 document.addEventListener("DOMContentLoaded", () => {
-  // Gestione schermata loader iniziale se in index.html
   const loaderScreen = document.getElementById("loader-screen");
   const userSelectScreen = document.getElementById("user-select-screen");
 
@@ -34,6 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function accendiHub() {
   const select = document.getElementById("user-select");
+  if (!select) return;
   const selectedOption = select.options[select.selectedIndex];
   const selectedUser = selectedOption.text;
   const isAdmin = selectedOption.getAttribute("data-admin") === "true";
@@ -85,24 +85,29 @@ function aggiornaStatoUtente() {
   }
 }
 
-/* ESTRAZIONE CASUALE SMART CON RIG SEGRETO */
+/* ESTRAZIONE CON PROBABILITA' UGUALE PER TUTTI (E CONTROLLO SICURO DEL RIG) */
 function estraiInterrogati() {
-  const materia = document.getElementById("pick-materia").value;
-  const count = parseInt(document.getElementById("pick-count").value) || 1;
+  const materiaEl = document.getElementById("pick-materia");
+  const modalitaEl = document.getElementById("pick-modalita");
+  
+  if (!materiaEl || !modalitaEl) return;
+
+  const materia = materiaEl.value;
+  const modalita = modalitaEl.value;
+
+  let count = 1;
+  if (modalita === "coppia") count = 2;
+  if (modalita === "tris") count = 3;
 
   const isRigActive = localStorage.getItem("isRigActive") === "true";
-  const excludedStudent = isRigActive && document.getElementById("rig-exclude-select") 
-    ? document.getElementById("rig-exclude-select").value 
-    : "";
-  const boostedStudent = isRigActive && document.getElementById("rig-boost-select") 
-    ? document.getElementById("rig-boost-select").value 
-    : "";
+  const excludeSelect = document.getElementById("rig-exclude-select");
+  const excludedStudent = (isRigActive && excludeSelect) ? excludeSelect.value : "";
 
+  // Pool con probabilità perfettamente uguale per tutti (peso 1)
   let pool = [];
   COMPAGNI.forEach(nome => {
-    if (nome === excludedStudent) return; // Esclusione 0%
-    let peso = (nome === boostedStudent) ? 10 : 1;
-    for (let i = 0; i < peso; i++) pool.push(nome);
+    if (nome === excludedStudent) return; // Se il trucco segreto è attivo, esclude la persona scelta
+    pool.push(nome);
   });
 
   let estratti = new Set();
@@ -124,35 +129,50 @@ function estraiInterrogati() {
   localStorage.setItem("registroInterrogazioni", JSON.stringify(registroInterrogazioni));
 
   const resDiv = document.getElementById("draw-result");
-  document.getElementById("draw-result-names").textContent = listaEstratti.join(", ");
-  resDiv.classList.remove("hidden");
+  const resNames = document.getElementById("draw-result-names");
+  if (resNames && resDiv) {
+    resNames.textContent = listaEstratti.join(" e ");
+    resDiv.classList.remove("hidden");
+  }
 
   renderClassStatus();
 }
 
 function pubblicaVerifica() {
-  const mat = document.getElementById("input-verifica-materia").value;
-  const data = document.getElementById("input-verifica-data").value;
+  const matEl = document.getElementById("input-verifica-materia");
+  const dataEl = document.getElementById("input-verifica-data");
+  if (!matEl || !dataEl) return;
+
+  const mat = matEl.value;
+  const data = dataEl.value;
 
   if (!mat || !data) { alert("Compila materia e data!"); return; }
 
   const container = document.getElementById("verifiche-list");
+  if (!container) return;
+
   const item = document.createElement("div");
   item.className = "verifica-item";
   item.innerHTML = `<span class="materia">${mat}</span><span class="data">${data}</span>`;
   container.appendChild(item);
 
-  document.getElementById("input-verifica-materia").value = "";
-  document.getElementById("input-verifica-data").value = "";
+  matEl.value = "";
+  dataEl.value = "";
 }
 
 function pubblicaMateriale() {
-  const titolo = document.getElementById("input-materiale-titolo").value;
-  const link = document.getElementById("input-materiale-link").value || "#";
+  const titEl = document.getElementById("input-materiale-titolo");
+  const linkEl = document.getElementById("input-materiale-link");
+  if (!titEl) return;
+
+  const titolo = titEl.value;
+  const link = (linkEl && linkEl.value) ? linkEl.value : "#";
 
   if (!titolo) { alert("Inserisci il titolo del materiale!"); return; }
 
   const container = document.getElementById("links-grid");
+  if (!container) return;
+
   const btn = document.createElement("a");
   btn.className = "chip-btn";
   btn.href = link;
@@ -160,8 +180,8 @@ function pubblicaMateriale() {
   btn.textContent = titolo;
   container.appendChild(btn);
 
-  document.getElementById("input-materiale-titolo").value = "";
-  document.getElementById("input-materiale-link").value = "";
+  titEl.value = "";
+  if (linkEl) linkEl.value = "";
 }
 
 function resetRegistri() {
@@ -205,11 +225,9 @@ function renderClassStatus() {
 
 function popolaSelettiRig() {
   const excSelect = document.getElementById("rig-exclude-select");
-  const boostSelect = document.getElementById("rig-boost-select");
-  if (!excSelect || !boostSelect) return;
+  if (!excSelect) return;
 
   COMPAGNI.forEach(nome => {
     excSelect.appendChild(new Option(nome, nome));
-    boostSelect.appendChild(new Option(nome, nome));
   });
 }
